@@ -1,6 +1,6 @@
-# SAP Data Extraction Tool
+# SAP ABAP 取数工具
 
-SAP 数据提取工具配置与操作手册 · SAP data extraction tool configuration and user manuals
+SAP ABAP 数据提取工具配置与操作手册 · SAP ABAP data extraction tool configuration and user manuals
 
 ## Overview · 概述
 
@@ -14,15 +14,15 @@ This repository contains XML configuration templates and user manuals for a SAP 
 .
 ├── User Manual/
 │   ├── Data_Extraction_Tool_SAP_Execution_Guide(2020v1).pdf   # 执行指南 Execution Guide
-│   └── KPMG ABAP Program_操作手册简易版.pdf                    # ABAP 程序操作手册
+│   └── SAP_ABAP_Program_操作手册简易版.pdf                    # ABAP 程序操作手册
 └── xml File/
     ├── Testing跑通测试/
-    │   └── KPMG_SAP_TEST.xml                                  # 连通性测试配置
+    │   └── SAP_ABAP_TEST.xml                                  # 连通性测试配置
     └── Extraction_Tool_MN_2023_1-8_dryRun_20230912/
-        ├── KPMG_FI_SAP_ECC6.xml                               # FI 模块取数配置
-        ├── KPMG_MM_SAP_ECC6.xml                               # MM 模块取数配置
-        ├── KPMG_SD_SAP_ECC6.xml                               # SD 模块取数配置
-        └── KPMG ABAP Program_操作手册简易版.pdf               # 配套操作手册
+        ├── FI_SAP_ECC6.xml                                    # FI 模块取数配置
+        ├── MM_SAP_ECC6.xml                                    # MM 模块取数配置
+        ├── SD_SAP_ECC6.xml                                    # SD 模块取数配置
+        └── SAP_ABAP_Program_操作手册简易版.pdf                # 配套操作手册
 ```
 
 ## Contents · 内容说明

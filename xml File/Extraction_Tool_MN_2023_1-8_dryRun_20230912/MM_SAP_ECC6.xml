@@ -23,7 +23,7 @@
     <Language>ZH</Language>
   </Scope>
   <Setting>
-    <P_PATH>/tmp/kpmg/</P_PATH>
+    <P_PATH>/tmp/sap_abap_extraction/</P_PATH>
     <P_PFIX/>
     <P_RELATD>X</P_RELATD>
     <P_RELAT1>X</P_RELAT1>
