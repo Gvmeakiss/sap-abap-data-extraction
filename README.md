@@ -1,5 +1,22 @@
 # SAP ABAP 取数工具
 
+> SAP ECC6 数据提取工具的 XML 配置模板与操作手册，按审计口径提取 FI / MM / SD 模块数据，支持 dry-run 验证。
+
+<p align="center">
+  <img src="https://img.shields.io/badge/SAP-ECC6-1F6FB2" alt="SAP ECC6">
+  <img src="https://img.shields.io/badge/Modules-FI%2FMM%2FSD-0E8A16" alt="Modules">
+  <img src="https://img.shields.io/badge/Format-XML%20%7C%20PDF-FF6F00" alt="Format">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+  <img src="https://img.shields.io/github/last-commit/Gvmeakiss/sap-abap-data-extraction?label=updated" alt="Updated">
+</p>
+
+## 📋 目录
+
+- [Overview · 概述](#overview--概述)
+- [Directory Structure · 目录结构](#directory-structure--目录结构)
+- [Contents · 内容说明](#contents--内容说明)
+- [Usage Notes · 使用说明](#usage-notes--使用说明)
+
 SAP ABAP 数据提取工具配置与操作手册 · SAP ABAP data extraction tool configuration and user manuals
 
 ## Overview · 概述
@@ -38,3 +55,13 @@ This repository contains XML configuration templates and user manuals for a SAP 
 - 配置以 dry-run 模式运行，验证取数逻辑后再正式执行
 - 各模块配置独立，可按审计项目需要启用对应 XML
 - 输出结果建议按「日期_模块_场景」规范归档，保证可复核性
+
+---
+
+<div align="center">
+
+**James Li · 审计数据分析工具集**
+
+📫 本工具用于内部审计与数据核对，辅助分析但不替代专业判断，不作为对外签字版本。
+
+</div>
