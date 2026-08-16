@@ -16,10 +16,21 @@
 - **统一输出约定**：字段分隔符 `#|#`（`P_COLSEP`），按 `P_FILESZ=2000` 分片，支持 ZIP 打包（`P_ZIP=X`）与分目录输出（`P_CLDIR=X`）。
 - **配套文档**：执行指南（2020v1）与 ABAP 程序简易操作手册（PDF）。
 
+## 📚 分模块参考文档
+
+每个模块单独维护一份 README，含 **SAP 标准表参考链接**、抽取字段与审计场景角色说明：
+
+- 📒 [FI · 财务取数](FI/README.md) — 序时账 vs 课余表（余额表）核对；参考 `BKPF` / `BSEG` / `FAGLFLEXT` / `GLT0` 等
+- 📦 [MM · 采购取数](MM/README.md) — 采购三单匹配；参考 `EKKO` / `EKPO` / `EKBE` / `MKPF` / `MSEG` / `RBKP` / `RSEG` 等
+- 🚚 [SD · 销售取数](SD/README.md) — 销售三单匹配；参考 `VBAK` / `VBAP` / `LIKP` / `LIPS` / `VBRK` / `VBRP` / `VBFA` 等
+
 ## 📂 目录结构
 
 ```
 sap-abap-data-extraction/
+├── FI/README.md                                              # FI 模块参考文档
+├── MM/README.md                                              # MM 模块参考文档
+├── SD/README.md                                              # SD 模块参考文档
 ├── User Manual/
 │   ├── Data_Extraction_Tool_SAP_Execution_Guide(2020v1).pdf   # 执行指南
 │   └── SAP_ABAP_Program_操作手册简易版.pdf                    # ABAP 程序操作手册
@@ -65,14 +76,6 @@ KAAP 的 XML 配置由以下层级组成，决定“取什么、怎么筛、怎�
 - **`<Report>` / `<Group>`**：报表分组——`FI`、`SD_MM`、`SYS`、`SCREENING_REPORT`；每个 `<Group>` 含 `GrpID`、`GrpLabel` 与 `Extract` 开关。
 - **`<GrpObj>` / `<ConstraintTable>` / `<Field>`**：具体表清单、关联约束表与输出字段。
 
-各模块实际配置范围（来自 XML）：
-
-| 模块 | 分组（GrpLabel） | 约束表（ConstraintTable）节选 |
-|---|---|---|
-| FI | Accounting Documents、FI Master (ANLT/SKA1/SKAT/SKB1)、FI GL Master & Summary、Electronic Bank Statements、Secondary Index (Customer/GL/Vendor)、CO Tables、Payment Program、Project | ANLT、BKPF、BSAD、BSAK、BSAS、BSID、BSIK、BSIS、FAGLFLEXT、FEBEP、FEBKO、GLT0、SKAT、SKB1、T881T |
-| MM | Invoice Documents、Material Movement Doc、Purchase Documents、Purchase Service Package | EBAN、EKKO、ESSR、MKPF、RBKP、RBKP_BLOCKED |
-| SD | Pricing Conditions、Pricing Conditions KONV、Deliveries、Sales Document Flow、Sales Invoices、Sales Orders | LIKP、VBAK、VBFA、VBRK |
-
 ## 📋 输入与输出
 
 - **输入**：SAP ECC6 系统（经 ABAP 提取程序 KAAP 读取）。
@@ -93,52 +96,18 @@ KAAP 的 XML 配置由以下层级组成，决定“取什么、怎么筛、怎�
 
 > 本工具仅做**抽取与落地**，不做匹配计算；差异判断、匹配率、Not Test 分类在下游 Python 工具（`purchase-three-match-*`、`sales-three-match-*`、`sap-sd-three-match`、`sap-fi-2026h1`）。字段分隔符统一 `#|#`，与下游读取约定一致。
 
-### 🔄 MM — 采购取数（支撑采购三单匹配）
+📚 **分模块详细文档（含 SAP 标准表参考链接）**：
+- 📒 [FI · 财务取数](FI/README.md) — 序时账 vs 课余表核对
+- 📦 [MM · 采购取数](MM/README.md) — 采购三单匹配
+- 🚚 [SD · 销售取数](SD/README.md) — 销售三单匹配
 
-| SAP 标准表 | 标准语义 | 本工具抽取关键字段 | 在三单匹配中的角色 |
-|---|---|---|---|
-| `EKKO` | 采购订单抬头 | `BUKRS` `LIFNR` `AEDAT` `BSART` | 订单抬头 |
-| `EKPO` | 采购订单行项目 | `MATNR` `MENGE` `MEINS` `NETWR` `LOEKZ` `WEBRE` | 订单行（数量 / 净额 / 删除标记） |
-| `EKET` | 计划协议计划行 | 交货计划 | 交货排程 |
-| `EKBE` | 采购凭证历史 | `VGABE` `BEWTP` `MENGE` `DMBTR` `WRBTR` `SHKZG` `EBELN/EBELP` | **三单枢纽**：按业务类型串接收货与发票 |
-| `EKBZ` | 采购交货成本 | 运费 / 关税等 | 影响发票净额比较（扣减交货成本口径） |
-| `MKPF` | 物料凭证抬头 | `BUDAT` | 收货抬头 |
-| `MSEG` | 物料凭证行项目 | `MENGE` `MEINS` `BWART` `KZBEW=B` `EBELN/EBELP` `SHKZG` | 收货行（仅采购相关移动） |
-| `RBKP` | 发票凭证抬头 | `RBSTAT` `IVTYP` `STBLG` `KURSF` `RMWWR` `LIFNR` | 发票抬头（过账状态 / 冲销） |
-| `RSEG` | 发票凭证行项目 | `EBELN/EBELP` `MENGE` `WRBTR` `SHKZG` `EXKBE` `XEKBZ` `LFBNR/LFPOS` | 发票行（费用 / 交货成本标记、参考收货） |
-| `RBMA` / `RBCO` | 预扣税 / 科目分配 | — | 发票附属信息 |
-| `EBAN` | 采购申请 | — | 下单前环节（追完整采购链） |
-| `ESLH` / `ESLL` / `ESSR` | 服务主数据 / 服务行 / 服务录入 | — | 服务类采购 |
+### 各模块配置范围（来自 XML）
 
-**覆盖度**：采购三单（订单 EKKO/EKPO、收货 MKPF/MSEG、发票 RBKP/RSEG）齐备，`EKBE` 以 `EBELN+EBELP` 为键天然串联三单。**缺口**：价格条件记录 `KONV` / `KONP` 分组（`kon` / `kov`）为 `Extract` 关闭，不抽；三单比对净额 / 数量不受影响，仅价格差异按条件拆解的细度受限。
-
-### 🔄 SD — 销售取数（支撑销售三单匹配）
-
-| SAP 标准表 | 标准语义 | 本工具抽取关键字段 | 在三单匹配中的角色 |
-|---|---|---|---|
-| `VBAK` | 销售订单抬头 | `VKORG` `KUNAG` `AUDAT` | 订单抬头 |
-| `VBAP` | 销售订单行项目 | `MATNR` `KWMENG/VRKME` `NETWR` `WERKS` `VGBEL/VGPOS` | 订单行（数量 / 净额 / 参考交货） |
-| `LIKP` | 交货单抬头 | `LFDAT` `WERKS` | 发货抬头 |
-| `LIPS` | 交货单行项目 | `LFIMG` `VRKME` `BWART` `VGBEL/VGPOS` | 发货行（参考订单 / 开票） |
-| `VBRK` | 出具发票抬头 | `FKDAT` `BUKRS` `VKORG` `KUNAG` `NETWR` `FKSTO` | 开票抬头（冲销 `FKSTO`） |
-| `VBRP` | 出具发票行项目 | `FKIMG` `NETWR` `AUBEL/AUPOS` `VGBEL/VGPOS` `MATNR` | 开票行（**参考订单 / 参考交货**直连三元） |
-| `VBFA` | 凭证流 | `VBELV/POSNV` `VBELN/POSNN` `VBTYP_N/V` `RFMNG` `RFWRT` | **单据流向枢纽**：串联 订单 → 发货 → 开票 |
-
-**覆盖度**：销售三单（订单 VBAK/VBAP、发货 LIKP/LIPS、开票 VBRK/VBRP）齐备，且经 `VBRP.AUBEL/AUPOS` 与 `VBRP.VGBEL/VGPOS` 可直接锁定「订单行—发货行—开票行」三元关系，`VBFA` 另提供跨单据完整流向（对应 `sap-sd-three-match` 的 `AUBEL/AUPOS` 键）。**缺口**：同上，价格条件 `KONV/KONP` 未抽。
-
-### 🧾 FI — 财务取数（支撑序时账 vs 课余表核对）
-
-| SAP 标准表 | 类别 | 本工具抽取关键字段 | 角色 |
-|---|---|---|---|
-| `BKPF` / `BSEG` / `BSEG_ADD` | 序时账（凭证抬头 / 行项目） | `BELNR` `BUKRS` `BUDAT` `HKONT/SAKNR` `SHKZG` `DMBTR` `WRBTR` `MENGE/MEINS` `EBELN/EBELP` `KOART` `BSCHL` | 凭证明细（科目 / 金额 / 借贷 / 数量 / 采购参考） |
-| `FAGLFLEXT` / `GLT0` | 课余表（余额） | `RACCT` `RBUKRS` `RYEAR` `RLDNR` `HSL01–HSL16` `RBUSA` `PRCTR` `SEGMENT` `DRCRK` | 按科目 / 公司 / 年度的期间余额（新总账 / 旧总账） |
-| `BSIS` / `BSAS` | 总账次要索引 | 未清 / 已清项（含 `HKONT` `DMBTR` `SHKZG`） | 总账勾稽中间层 |
-| `BSID` / `BSAD` | 应收（AR）次要索引 | 未清 / 已清项 | 应收子分类账 |
-| `BSIK` / `BSAK` | 应付（AP）次要索引 | 未清 / 已清项 | 应付子分类账 |
-| `SKA1` / `SKAT` / `SKB1` | 科目主数据 | 科目表 / 文本 / 公司代码级属性 | 校验 `HKONT` 合法性 |
-| `FEBKO` / `FEBEP` | 电子银行对账单 | 抬头 / 行项目 | 银行对账（可顺带支撑银行函证 / 未达账） |
-
-**核对方法**：以 `(HKONT/SAKNR, BUKRS, GJAHR, MONAT)` 对 `BSEG` 按 `SHKZG` 计净额，应等于 `FAGLFLEXT` / `GLT0` 对应 `(RACCT, RBUKRS, RYEAR, HSLxx)` 期间额；`BSIS/BSAS` 提供总账未清 / 已清项独立复算口径。每表均带 `HashtotalField`（如 `BKPF=TXKRS`、`FAGLFLEXT/GLT0=HSL16`、`BSEG=DMBTR`），落地后先核对哈希总计再分析。**缺口**：`CO Tables` 分组 `Extract` 关闭，若需将 CO 过账并入总账核对须另补抽；标准 FI 总账核对不受影响。
+| 模块 | 分组（GrpLabel） | 约束表（ConstraintTable）节选 |
+|---|---|---|
+| FI | Accounting Documents、FI Master (ANLT/SKA1/SKAT/SKB1)、FI GL Master & Summary、Electronic Bank Statements、Secondary Index (Customer/GL/Vendor)、CO Tables、Payment Program、Project | ANLT、BKPF、BSAD、BSAK、BSAS、BSID、BSIK、BSIS、FAGLFLEXT、FEBEP、FEBKO、GLT0、SKAT、SKB1、T881T |
+| MM | Invoice Documents、Material Movement Doc、Purchase Documents、Purchase Service Package | EBAN、EKKO、ESSR、MKPF、RBKP、RBKP_BLOCKED |
+| SD | Pricing Conditions、Pricing Conditions KONV、Deliveries、Sales Document Flow、Sales Invoices、Sales Orders | LIKP、VBAK、VBFA、VBRK |
 
 ### ✅ 覆盖度小结
 
