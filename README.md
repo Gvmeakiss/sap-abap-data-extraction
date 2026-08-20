@@ -6,11 +6,12 @@
 
 ## 📌 项目简介
 
-本仓库是 SAP 审计数据提取（ABAP 程序 KAAP）的**配置与手册**集合，不含可独立运行的程序。它提供 FI / MM / SD 三个模块的 XML 取数配置，供审计人员在 SAP ECC6 上按既定审计口径提取数据；配套执行指南与 ABAP 程序操作手册说明如何装载配置、运行与归档结果。MN_2023 配置为 dry-run 验证版本（`dryRun_20230912`），另含一份连通性测试配置 `SAP_ABAP_TEST.xml`。
+本仓库是 SAP 审计数据提取（ABAP 程序 KAAP）的**配置、程序与手册**集合。它提供 FI / MM / SD 三个模块的 XML 取数配置，并提供一个面向长周期销售收入生命周期的独立 ECC6 ABAP 取数报表；配套执行指南与 ABAP 程序操作手册说明如何装载配置、运行与归档结果。MN_2023 配置为 dry-run 验证版本（`dryRun_20230912`），另含一份连通性测试配置 `SAP_ABAP_TEST.xml`。
 
 ## ✨ 功能特性
 
 - **三模块取数配置**：`FI_SAP_ECC6.xml`、`MM_SAP_ECC6.xml`、`SD_SAP_ECC6.xml` 覆盖财务会计、物料管理、销售与分销。
+- **SD 长周期收入取数工具**：`SD_Revenue_Lifecycle/` 提供独立 ABAP 报表，支持跨 3–4 年的订单、交货、开票、红冲/重开票及 FI 凭证链路取数。
 - **标准 SAP 表约束与字段清单**：每个配置以 `<Group>/<GrpObj>` 列出待提取表，以 `<ConstraintTable>` 定义关联约束，以 `<Field>` 定义输出字段与哈希总计字段。
 - **dry-run 测试配置**：`Extraction_Tool_MN_2023_1-8_dryRun_20230912` 用于上线前验证逻辑；`Testing跑通测试/SAP_ABAP_TEST.xml` 用于系统连通性测试。
 - **统一输出约定**：字段分隔符 `#|#`（`P_COLSEP`），按 `P_FILESZ=2000` 分片，支持 ZIP 打包（`P_ZIP=X`）与分目录输出（`P_CLDIR=X`）。
@@ -31,6 +32,11 @@ sap-abap-data-extraction/
 ├── FI/README.md                                              # FI 模块参考文档
 ├── MM/README.md                                              # MM 模块参考文档
 ├── SD/README.md                                              # SD 模块参考文档
+├── SD_Revenue_Lifecycle/                                      # SD 长周期收入生命周期独立取数工具
+│   ├── zsd_rev_lifecycle_extract.prog.abap                    # 可执行 ABAP 报表
+│   ├── README.md                                               # 工具说明与运行步骤
+│   ├── field_dictionary.csv                                    # 输出字段字典
+│   └── abaplint.json                                           # ABAPLint 配置
 ├── User Manual/
 │   ├── Data_Extraction_Tool_SAP_Execution_Guide(2020v1).pdf   # 执行指南
 │   └── SAP_ABAP_Program_操作手册简易版.pdf                    # ABAP 程序操作手册
@@ -46,12 +52,12 @@ sap-abap-data-extraction/
 
 ## 🔧 环境要求
 
-- SAP ECC6 系统 + SAP GUI / ABAP 提取程序 KAAP（本仓库仅提供配置，无 Python 依赖）。
+- SAP ECC6 系统 + SAP GUI / ABAP 提取程序 KAAP；`SD_Revenue_Lifecycle/` 下的报表可作为独立 ABAP 报表导入或复制到客户命名空间（本仓库无 Python 依赖）。
 - 提取输出：TXT/CSV，字段分隔符 `#|#`，可选 ZIP 打包。
 
 ## 🚀 安装
 
-本仓库为配置与手册，**无需安装依赖**。将对应 XML 载入 KAAP 提取程序即可使用：
+本仓库无需安装依赖。XML 配置可载入 KAAP 提取程序；独立报表可按 `SD_Revenue_Lifecycle/README.md` 的说明导入 ECC6 后执行：
 
 ```bash
 # 1. 将 FI/MM/SD 的 XML 配置导入 KAAP 提取程序
