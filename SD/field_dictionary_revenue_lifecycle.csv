@@ -1,0 +1,17 @@
+dataset#|#field#|#grain#|#purpose#|#sign_or_note
+ORDER_ITEM#|#VBELN/POSNR#|#sales order item#|#stable order-line key#|#preserve leading zeros
+ORDER_ITEM#|#NETWR/WAERK#|#sales order item#|#order net value and currency#|#not automatically legal contract value
+DELIVERY_ITEM#|#VBELN/POSNR#|#delivery item#|#delivery quantity and source order reference#|#apply SHKZG where configured
+BILLING_EVENT#|#VBELN/POSNR#|#billing item#|#retain every invoice, credit, debit or cancellation event#|#do not net in extraction
+BILLING_EVENT#|#AUBEL/AUPOS#|#billing item#|#direct sales-order reference#|#primary order link
+BILLING_EVENT#|#VGBEL/VGPOS#|#billing item#|#reference delivery/document#|#secondary flow link
+BILLING_EVENT#|#FKSTO/SFAKN#|#billing header/item context#|#cancellation indicators and reference#|#verify direction in client configuration
+BILLING_EVENT#|#SHKZG#|#billing item#|#preserve debit/credit direction#|#do not infer accounting conclusion from sign alone
+DOCUMENT_FLOW#|#VBELV/POSNV -> VBELN/POSNN#|#document-flow edge#|#predecessor/successor relationship#|#supports multi-stage tracing
+FI_HEADER#|#BUKRS/BELNR/GJAHR#|#FI document header#|#stable FI document key#|#year is part of the key
+FI_HEADER#|#AWTYP/AWKEY#|#FI document header#|#source-document reference#|#configuration-dependent
+FI_HEADER#|#STBLG/STJAH#|#FI document header#|#reversal reference#|#retain original and reversal
+FI_LINE#|#HKONT/SHKZG/DMBTR/WRBTR#|#FI line item#|#identify accrual/revenue lines and signed amounts#|#reconcile by currency/company
+FI_LINE#|#REBZG/REBZJ/REBZZ#|#FI line item#|#reference invoice linkage#|#may be blank depending on posting logic
+FI_LINE#|#AUGBL/AUGGJ#|#FI line item#|#clearing linkage#|#do not equate clearing with revenue recognition
+FI_LINE#|#VBELN/VBEL2/POSN2#|#FI line item#|#SD/order references where populated#|#client-dependent

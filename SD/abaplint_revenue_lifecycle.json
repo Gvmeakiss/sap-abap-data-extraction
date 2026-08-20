@@ -1,0 +1,21 @@
+{
+  "global": {
+    "files": "/*.abap",
+    "exclude": []
+  },
+  "syntax": {
+    "version": {
+      "release": "v740sp05",
+      "language": "Normal"
+    },
+    "errorNamespace": "^(Z|Y|LCL_|TY_|LIF_)"
+  },
+  "rules": {
+    "check_text_elements": {
+      "severity": "Off"
+    },
+    "abapdoc": {
+      "severity": "Off"
+    }
+  }
+}
